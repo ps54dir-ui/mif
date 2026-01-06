@@ -40,9 +40,12 @@ export default function CompanySearchPage() {
 
   // URL query가 변경되면 자동 검색
   useEffect(() => {
-    if (query && query !== lastSearchedQuery) {
+    if (query && query.trim() && query !== lastSearchedQuery) {
+      console.log('[DEBUG] URL query 변경 감지, 검색 시작:', query)
       setSearchQuery(query)
       setLastSearchedQuery(query)
+      setHasSearched(false) // 새 검색 시작 전 리셋
+      setIsSearching(true) // 검색 시작 표시
       // handleSearch 내부에서 이전 요청 취소를 처리하므로 여기서는 취소하지 않음
       handleSearch(query, false)
     }
@@ -169,17 +172,20 @@ export default function CompanySearchPage() {
             }
             console.log('[DEBUG] setResults 호출 (fallback):', [fallbackResult])
             setResults([fallbackResult])
+            setHasSearched(true) // fallback 결과도 검색 완료로 표시
           } else {
             console.log('[DEBUG] setResults 호출 (빈 배열)')
             setResults([])
+            setHasSearched(true) // 빈 결과도 검색 완료로 표시
           }
         } else {
           console.log('[DEBUG] setResults 호출 (API 결과):', data.matches)
           setResults(data.matches)
+          setHasSearched(true) // 검색 완료 표시
         }
         setLastSearchedQuery(trimmedSearch)
-        setHasSearched(true) // 검색 완료 표시
-        console.log('[DEBUG] 검색 완료 - hasSearched: true, results.length:', data.matches?.length || 0)
+        setIsSearching(false) // 검색 완료 표시를 여기서 명시적으로 설정
+        console.log('[DEBUG] 검색 완료 - hasSearched: true, isSearching: false, results.length:', data.matches?.length || 0)
       } catch (fetchErr: any) {
         clearTimeout(timeoutId)
         
@@ -375,9 +381,19 @@ export default function CompanySearchPage() {
           </div>
         )}
 
-        {/* 검색 완료 후 결과 표시 */}
-        {hasSearched && !isSearching && (
+        {/* 검색 완료 후 결과 표시 - hasSearched가 true이거나 results가 있거나 error가 있으면 표시 */}
+        {(!isSearching && (hasSearched || results.length > 0 || error)) && (
           <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-6">
+            {(() => {
+              console.log('[DEBUG] 검색 결과 영역 렌더링:', { 
+                hasSearched, 
+                isSearching, 
+                resultsCount: results.length,
+                hasError: !!error,
+                query
+              })
+              return null
+            })()}
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold text-white">
                 검색 결과
