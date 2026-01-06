@@ -41,12 +41,8 @@ export default function CompanySearchPage() {
   // URL query가 변경되면 자동 검색
   useEffect(() => {
     if (query && query.trim() && query !== lastSearchedQuery) {
-      console.log('[DEBUG] URL query 변경 감지, 검색 시작:', query)
       setSearchQuery(query)
       setLastSearchedQuery(query)
-      setHasSearched(false) // 새 검색 시작 전 리셋
-      setIsSearching(true) // 검색 시작 표시
-      // handleSearch 내부에서 이전 요청 취소를 처리하므로 여기서는 취소하지 않음
       handleSearch(query, false)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -91,10 +87,6 @@ export default function CompanySearchPage() {
         headers['Authorization'] = `Bearer ${token}`
       }
 
-      console.log('[DEBUG] 검색 API 호출:', {
-        url: `${apiUrl}/api/company-search/search`,
-        body: { company_name: searchTerm.trim() }
-      })
 
       // 이전 요청 취소
       if (abortControllerRef.current) {
@@ -127,11 +119,6 @@ export default function CompanySearchPage() {
           abortControllerRef.current = null
         }
 
-        console.log('[DEBUG] 검색 API 응답:', {
-          status: response.status,
-          ok: response.ok,
-          headers: Object.fromEntries(response.headers.entries())
-        })
 
         if (!response.ok) {
           let errorMessage = '검색 중 오류가 발생했습니다.'
@@ -150,17 +137,12 @@ export default function CompanySearchPage() {
         }
 
         const data = await response.json()
-        console.log('[DEBUG] 검색 API 성공 응답:', data)
-        console.log('[DEBUG] matches 개수:', data.matches?.length || 0)
-        console.log('[DEBUG] 첫 번째 match:', data.matches?.[0])
         
-        // 검색 결과가 없어도 사용자 입력값은 반환되어야 함
+        // 검색 결과 처리
         if (!data.matches || data.matches.length === 0) {
-          console.warn('[WARNING] 검색 결과가 비어있습니다. 사용자 입력값 fallback이 작동하지 않았을 수 있습니다.')
-          // 프론트엔드에서도 fallback 추가
+          // 검색 결과가 없으면 사용자 입력값을 fallback으로 사용
           if (trimmedSearch && trimmedSearch.length >= 2) {
-            console.log('[DEBUG] 프론트엔드 fallback: 사용자 입력값 추가')
-            const fallbackResult = {
+            setResults([{
               id: null,
               company_name: trimmedSearch,
               manager_name: null,
@@ -169,23 +151,17 @@ export default function CompanySearchPage() {
               phone: null,
               contact: null,
               source: 'user_input'
-            }
-            console.log('[DEBUG] setResults 호출 (fallback):', [fallbackResult])
-            setResults([fallbackResult])
-            setHasSearched(true) // fallback 결과도 검색 완료로 표시
+            }])
           } else {
-            console.log('[DEBUG] setResults 호출 (빈 배열)')
             setResults([])
-            setHasSearched(true) // 빈 결과도 검색 완료로 표시
           }
         } else {
-          console.log('[DEBUG] setResults 호출 (API 결과):', data.matches)
           setResults(data.matches)
-          setHasSearched(true) // 검색 완료 표시
         }
+        
         setLastSearchedQuery(trimmedSearch)
-        setIsSearching(false) // 검색 완료 표시를 여기서 명시적으로 설정
-        console.log('[DEBUG] 검색 완료 - hasSearched: true, isSearching: false, results.length:', data.matches?.length || 0)
+        setHasSearched(true)
+        setIsSearching(false)
       } catch (fetchErr: any) {
         clearTimeout(timeoutId)
         
@@ -242,10 +218,8 @@ export default function CompanySearchPage() {
       
       setResults([])
       setHasSearched(true) // 오류 발생 시에도 검색 시도했음을 표시하여 결과 영역 표시
-      console.log('[DEBUG] 오류 발생 - hasSearched: true, results: []')
     } finally {
       setIsSearching(false)
-      console.log('[DEBUG] 검색 완료 (finally) - isSearching: false')
     }
   }
 
@@ -398,19 +372,9 @@ export default function CompanySearchPage() {
           </div>
         )}
 
-        {/* 검색 완료 후 결과 표시 - 검색 중이 아니고, (결과가 있거나 검색을 시도했거나 에러가 있거나 검색어가 있으면) 표시 */}
-        {!isSearching && (results.length > 0 || hasSearched || error || (searchQuery && searchQuery.trim())) && (
+        {/* 검색 완료 후 결과 표시 */}
+        {hasSearched && !isSearching && (
           <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-6">
-            {(() => {
-              console.log('[DEBUG] 검색 결과 영역 렌더링:', { 
-                hasSearched, 
-                isSearching, 
-                resultsCount: results.length,
-                hasError: !!error,
-                query
-              })
-              return null
-            })()}
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold text-white">
                 검색 결과
