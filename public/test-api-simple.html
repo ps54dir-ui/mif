@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>간단한 API 테스트</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #1e1e1e; color: #fff; }
+        button { padding: 10px 20px; margin: 5px; background: #4CAF50; color: white; border: none; cursor: pointer; }
+        .result { margin: 10px 0; padding: 10px; background: #2d2d2d; border-radius: 4px; }
+        .success { border-left: 4px solid #4CAF50; }
+        .error { border-left: 4px solid #f44336; }
+    </style>
+</head>
+<body>
+    <h1>🔍 간단한 API 테스트</h1>
+    <button onclick="test()">테스트 실행</button>
+    <div id="result" class="result" style="display:none;"></div>
+    
+    <script>
+        async function test() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = '테스트 중...';
+            resultDiv.className = 'result';
+            
+            const tests = [
+                { name: '1. 직접 fetch 테스트', url: 'http://localhost:8000/api/auth/check-username?username=test' },
+                { name: '2. 프록시 없이 직접 호출', url: 'http://127.0.0.1:8000/api/auth/check-username?username=test' }
+            ];
+            
+            let results = [];
+            
+            for (const test of tests) {
+                try {
+                    console.log(`테스트 시작: ${test.name}`);
+                    const response = await fetch(test.url, {
+                        method: 'GET',
+                        headers: { 'Content-Type': 'application/json' },
+                        mode: 'cors'
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        results.push(`✅ ${test.name}: 성공 (${response.status})`);
+                        console.log('성공:', data);
+                    } else {
+                        results.push(`⚠️ ${test.name}: HTTP ${response.status}`);
+                        console.error('HTTP 오류:', response.status);
+                    }
+                } catch (error) {
+                    results.push(`❌ ${test.name}: ${error.message}`);
+                    console.error('오류:', error);
+                }
+            }
+            
+            // 브라우저 정보
+            results.push(`\n브라우저 정보: ${navigator.userAgent}`);
+            results.push(`현재 URL: ${window.location.href}`);
+            
+            resultDiv.innerHTML = results.join('<br>');
+            resultDiv.className = results.some(r => r.includes('❌')) ? 'result error' : 'result success';
+        }
+    </script>
+</body>
+</html>

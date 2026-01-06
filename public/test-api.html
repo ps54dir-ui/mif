@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API 연결 테스트</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #1e1e1e;
+            color: #fff;
+        }
+        .test-box {
+            background: #2d2d2d;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        .success {
+            background: #1e4620;
+            border: 1px solid #4CAF50;
+        }
+        .error {
+            background: #4a1e1e;
+            border: 1px solid #f44336;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 API 연결 테스트</h1>
+    
+    <div class="test-box">
+        <h2>1. 백엔드 서버 연결 테스트</h2>
+        <button onclick="testBackend()">테스트</button>
+        <div id="backend-result" class="result" style="display:none;"></div>
+    </div>
+    
+    <div class="test-box">
+        <h2>2. 회원가입 API 테스트</h2>
+        <button onclick="testRegister()">테스트</button>
+        <div id="register-result" class="result" style="display:none;"></div>
+    </div>
+    
+    <div class="test-box">
+        <h2>3. 사용자명 중복 체크 테스트</h2>
+        <button onclick="testUsernameCheck()">테스트</button>
+        <div id="username-result" class="result" style="display:none;"></div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:8000';
+        
+        async function testBackend() {
+            const resultDiv = document.getElementById('backend-result');
+            resultDiv.style.display = 'block';
+            resultDiv.textContent = '테스트 중...';
+            resultDiv.className = 'result';
+            
+            try {
+                const response = await fetch(`${API_URL}/api/auth/check-username?username=test`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                resultDiv.textContent = `✅ 성공!\n상태 코드: ${response.status}\n응답: ${JSON.stringify(data, null, 2)}`;
+                resultDiv.className = 'result success';
+            } catch (error) {
+                resultDiv.textContent = `❌ 실패!\n오류: ${error.message}\n\n가능한 원인:\n- 백엔드 서버가 실행되지 않음\n- CORS 문제\n- 방화벽 차단`;
+                resultDiv.className = 'result error';
+            }
+        }
+        
+        async function testRegister() {
+            const resultDiv = document.getElementById('register-result');
+            resultDiv.style.display = 'block';
+            resultDiv.textContent = '테스트 중...';
+            resultDiv.className = 'result';
+            
+            const testData = {
+                username: `test_${Date.now()}`,
+                password: 'Test123!'
+            };
+            
+            try {
+                const response = await fetch(`${API_URL}/api/auth/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(testData)
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    resultDiv.textContent = `✅ 성공!\n상태 코드: ${response.status}\n사용자명: ${testData.username}\n토큰: ${data.access_token.substring(0, 20)}...`;
+                    resultDiv.className = 'result success';
+                } else {
+                    const errorData = await response.json();
+                    resultDiv.textContent = `⚠️ 서버 오류\n상태 코드: ${response.status}\n응답: ${JSON.stringify(errorData, null, 2)}`;
+                    resultDiv.className = 'result error';
+                }
+            } catch (error) {
+                resultDiv.textContent = `❌ 실패!\n오류: ${error.message}\n\n가능한 원인:\n- 네트워크 연결 문제\n- CORS 문제\n- 백엔드 서버 미실행`;
+                resultDiv.className = 'result error';
+            }
+        }
+        
+        async function testUsernameCheck() {
+            const resultDiv = document.getElementById('username-result');
+            resultDiv.style.display = 'block';
+            resultDiv.textContent = '테스트 중...';
+            resultDiv.className = 'result';
+            
+            try {
+                const response = await fetch(`${API_URL}/api/auth/check-username?username=testuser`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                resultDiv.textContent = `✅ 성공!\n상태 코드: ${response.status}\n응답: ${JSON.stringify(data, null, 2)}`;
+                resultDiv.className = 'result success';
+            } catch (error) {
+                resultDiv.textContent = `❌ 실패!\n오류: ${error.message}`;
+                resultDiv.className = 'result error';
+            }
+        }
+    </script>
+</body>
+</html>
