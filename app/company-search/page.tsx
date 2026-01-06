@@ -194,6 +194,23 @@ export default function CompanySearchPage() {
           console.log('[INFO] 검색 요청이 취소되었습니다 (새로운 검색이 시작됨)')
           // 이전 검색 결과는 유지하고, 검색 중 상태만 해제
           setIsSearching(false)
+          // AbortError 발생 시:
+          // 1. 이전 검색 결과가 있다면 유지 (hasSearched는 변경하지 않음)
+          // 2. 이전 검색 결과가 없고 검색어가 있다면 fallback으로 사용자 입력값 표시
+          if (results.length === 0 && trimmedSearch && trimmedSearch.length >= 2) {
+            console.log('[INFO] AbortError 발생, fallback 결과 추가')
+            setResults([{
+              id: null,
+              company_name: trimmedSearch,
+              manager_name: null,
+              company_url: null,
+              email: null,
+              phone: null,
+              contact: null,
+              source: 'user_input'
+            }])
+            setHasSearched(true)
+          }
           return // 에러 표시하지 않고 조용히 종료
         }
         
@@ -381,8 +398,8 @@ export default function CompanySearchPage() {
           </div>
         )}
 
-        {/* 검색 완료 후 결과 표시 - hasSearched가 true이거나 results가 있거나 error가 있으면 표시 */}
-        {(!isSearching && (hasSearched || results.length > 0 || error)) && (
+        {/* 검색 완료 후 결과 표시 - 검색 중이 아니고, (결과가 있거나 검색을 시도했거나 에러가 있거나 검색어가 있으면) 표시 */}
+        {!isSearching && (results.length > 0 || hasSearched || error || (searchQuery && searchQuery.trim())) && (
           <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-6">
             {(() => {
               console.log('[DEBUG] 검색 결과 영역 렌더링:', { 
