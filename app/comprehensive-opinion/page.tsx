@@ -7,7 +7,7 @@ import { ExecutiveSummary } from '@/components/dashboard/ExecutiveSummary'
 import { ICETodoList } from '@/components/dashboard/ICETodoList'
 import { ArrowLeft, TrendingUp, FileText } from 'lucide-react'
 import Link from 'next/link'
-import type { DashboardData } from '@/shared/types/dashboard'
+import type { DashboardData } from '../../shared/types/dashboard'
 
 // Mock 데이터
 const MOCK_DATA: DashboardData = {
