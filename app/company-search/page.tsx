@@ -102,10 +102,10 @@ export default function CompanySearchPage() {
       const controller = new AbortController()
       abortControllerRef.current = controller
       
-      // 타임아웃 설정 (10초)
+      // 타임아웃 설정 (25초 - 백엔드에서 여러 소스 조회로 시간 소요)
       const timeoutId = setTimeout(() => {
         controller.abort()
-      }, 10000)
+      }, 25000)
       
       try {
         const response = await fetch(`${apiUrl}/api/company-search/search`, {
@@ -157,7 +157,7 @@ export default function CompanySearchPage() {
           // 프론트엔드에서도 fallback 추가
           if (trimmedSearch && trimmedSearch.length >= 2) {
             console.log('[DEBUG] 프론트엔드 fallback: 사용자 입력값 추가')
-            setResults([{
+            const fallbackResult = {
               id: null,
               company_name: trimmedSearch,
               manager_name: null,
@@ -166,21 +166,27 @@ export default function CompanySearchPage() {
               phone: null,
               contact: null,
               source: 'user_input'
-            }])
+            }
+            console.log('[DEBUG] setResults 호출 (fallback):', [fallbackResult])
+            setResults([fallbackResult])
           } else {
+            console.log('[DEBUG] setResults 호출 (빈 배열)')
             setResults([])
           }
         } else {
+          console.log('[DEBUG] setResults 호출 (API 결과):', data.matches)
           setResults(data.matches)
         }
         setLastSearchedQuery(trimmedSearch)
         setHasSearched(true) // 검색 완료 표시
+        console.log('[DEBUG] 검색 완료 - hasSearched: true, results.length:', data.matches?.length || 0)
       } catch (fetchErr: any) {
         clearTimeout(timeoutId)
         
         // AbortError는 정상적인 취소이므로 에러로 표시하지 않음
         if (fetchErr.name === 'AbortError' || fetchErr.message?.includes('aborted')) {
           console.log('[INFO] 검색 요청이 취소되었습니다 (새로운 검색이 시작됨)')
+          // 이전 검색 결과는 유지하고, 검색 중 상태만 해제
           setIsSearching(false)
           return // 에러 표시하지 않고 조용히 종료
         }
@@ -198,6 +204,12 @@ export default function CompanySearchPage() {
     } catch (err: any) {
       console.error('검색 오류:', err)
       
+      // AbortError는 이미 내부에서 처리되었으므로 여기서는 무시
+      if (err.name === 'AbortError' || err.message?.includes('aborted')) {
+        console.log('[INFO] 외부 catch: AbortError 무시')
+        return
+      }
+      
       // 타임아웃 에러 처리
       if (err.name === 'TimeoutError') {
         setError('검색 시간이 초과되었습니다. 다시 시도해주세요.')
@@ -206,8 +218,11 @@ export default function CompanySearchPage() {
       }
       
       setResults([])
+      setHasSearched(true) // 오류 발생 시에도 검색 시도했음을 표시하여 결과 영역 표시
+      console.log('[DEBUG] 오류 발생 - hasSearched: true, results: []')
     } finally {
       setIsSearching(false)
+      console.log('[DEBUG] 검색 완료 (finally) - isSearching: false')
     }
   }
 

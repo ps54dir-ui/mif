@@ -148,14 +148,14 @@ export default function HomeDashboard() {
 
     setIsCheckingDuplicates(true)
     
-    // 타임아웃 설정 (10초)
+    // 타임아웃 설정 (25초 - AbortSignal.timeout보다 길게)
     const timeoutId = setTimeout(() => {
-      console.warn('회사 검색 타임아웃 (10초 초과)')
+      console.warn('회사 검색 타임아웃 (25초 초과)')
       setIsCheckingDuplicates(false)
       // 타임아웃 시에도 검색 결과 페이지로 이동
       const searchQuery = brandName.trim() || representativeName.trim() || companyUrl.trim()
       router.push(`/company-search?q=${encodeURIComponent(searchQuery)}&error=timeout`)
-    }, 10000)
+    }, 25000)
     
     try {
       const token = localStorage.getItem('access_token')
@@ -191,7 +191,7 @@ export default function HomeDashboard() {
         method: 'POST',
         headers,
         body: JSON.stringify(requestBody),
-        signal: AbortSignal.timeout(8000) // 8초 타임아웃
+        signal: AbortSignal.timeout(20000) // 20초 타임아웃 (백엔드에서 여러 소스 조회로 시간 소요)
       })
 
       clearTimeout(timeoutId)
