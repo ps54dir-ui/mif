@@ -1,5 +1,7 @@
 'use client'
 
+import { useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { OverallScoreCard } from '@/components/dashboard/OverallScoreCard'
 import { RadarChartComponent } from '@/components/dashboard/RadarChartComponent'
 import { SEOGEOReportCards } from '@/components/dashboard/SEOGEOReportCards'
@@ -68,7 +70,7 @@ function getCompanyHomepageUrl(companyName: string): string {
 
 export default function DiagnosisPage() {
   const { dashboardData, loading, companyName } = useDashboardData()
-  const searchParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null
+  const searchParams = useSearchParams()
 
   // 채널/카테고리 anchor로 스크롤
   useEffect(() => {
@@ -79,7 +81,7 @@ export default function DiagnosisPage() {
     if (el) {
       el.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
-  }, [])
+  }, [searchParams])
   const homepageUrl = getCompanyHomepageUrl(companyName)
 
   if (loading) {
