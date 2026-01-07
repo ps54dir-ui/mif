@@ -1,5 +1,7 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 import { ICETodoList } from '@/components/dashboard/ICETodoList'
 import { PriorityAlert } from '@/components/dashboard/PriorityAlert'
 import { WeeklyChecklist } from '@/components/dashboard/WeeklyChecklist'

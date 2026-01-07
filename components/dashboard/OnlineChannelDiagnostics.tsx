@@ -2,62 +2,7 @@
 
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts'
 import { AnalysisTypeBadge } from './AnalysisTypeBadge'
-
-interface OnlineChannelDiagnosticsProps {
-  diagnostics: {
-    youtube: {
-      video_mentions_growth: number  // 200% 상승
-      viral_index: number  // 92점
-    }
-    tiktok?: {
-      video_mentions_growth: number
-      viral_index: number
-    }
-    instagram: {
-      engagement_index: number  // 85점
-      hashtag_spread_rank: string  // 상위 1%
-    }
-    threads: {
-      engagement_index: number
-      hashtag_spread_rank: string
-    }
-    naver_cafe?: {
-      positive_review_ratio: number  // 78%
-      response_speed: string  // '매우 빠름'
-    }
-    daum_cafe?: {
-      positive_review_ratio: number
-      response_speed: string
-    }
-    own_mall?: {
-      conversion_rate: number  // 전환율
-      repeat_visit_rate: number  // 재방문율
-    }
-    x_twitter?: {
-      mentions_growth: number  // 언급량 증가
-      engagement_rate: number  // 참여율
-    }
-    smartstore?: {
-      conversion_rate: number  // 전환율
-      review_score: number  // 리뷰 점수
-    }
-    coupang?: {
-      sales_performance: number  // 판매 성과
-      review_score: number  // 리뷰 점수
-    }
-    facebook?: {
-      engagement_index: number
-      reach_growth: number
-    }
-    youtube_shorts?: {
-      views_growth: number
-      engagement_rate: number
-    }
-  }
-  analysis_type?: 'actual' | 'inference' | 'unavailable'
-  analysis_type_label?: string
-  analysis_type_description?: string
-}
+import type { OnlineChannelDiagnosticsProps } from '@/shared/types/channels'
 
 export function OnlineChannelDiagnostics({ diagnostics, analysis_type, analysis_type_label, analysis_type_description }: OnlineChannelDiagnosticsProps) {
   const chartData = [

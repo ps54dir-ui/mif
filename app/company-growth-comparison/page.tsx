@@ -1,5 +1,7 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { ArrowLeft, Calendar, BarChart3, TrendingUp, X } from 'lucide-react'

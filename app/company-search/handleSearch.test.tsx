@@ -17,7 +17,7 @@ import CompanySearchPage from './page'
 
 // Next.js router 모킹
 const mockPush = vi.fn()
-const mockGet = vi.fn((key: string) => {
+const mockGet = vi.fn<(key: string) => string | null>((key: string) => {
   if (key === 'q') return ''
   if (key === 'error') return null
   return null

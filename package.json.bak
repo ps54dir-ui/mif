@@ -1,4 +1,4 @@
-{
+﻿{
   "name": "marketing-diagnosis-frontend",
   "version": "0.1.0",
   "private": true,
@@ -10,12 +10,7 @@
     "type-check": "tsc --noEmit",
     "test": "vitest",
     "test:ui": "vitest --ui",
-    "test:run": "vitest run",
-    "verify": "npm run lint && npm run type-check && npm run build"
-  },
-  "engines": {
-    "node": ">=20.0.0",
-    "npm": ">=10.0.0"
+    "test:run": "vitest run"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.89.0",

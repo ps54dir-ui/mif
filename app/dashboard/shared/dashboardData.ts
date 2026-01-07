@@ -147,7 +147,7 @@ export const NIKE_DATA: DashboardData = {
       views_growth: 320,
       engagement_rate: 8.5
     }
-  },
+  } as any,
   channelDiagnostics: {
     youtube: {
       score: 92,
@@ -177,7 +177,7 @@ export const NIKE_DATA: DashboardData = {
       score: 85,
       insight: '숏폼 콘텐츠로 젊은 세대 유입률 급증, 전환율 개선 필요'
     }
-  },
+  } as any,
   channelAsymmetry: {
     insights: [
       {

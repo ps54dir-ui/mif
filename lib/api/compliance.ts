@@ -2,7 +2,7 @@
  * 컴플라이언스 API 클라이언트
  */
 
-import { ComplianceDashboard, ComplianceScorecard, RemediationPlan, RiskSelfDiagnosis } from '@/shared/types/compliance';
+import { ComplianceDashboard, ComplianceScorecard, RemediationPlan, RiskSelfDiagnosis } from '../../shared/types/compliance';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 

@@ -1,5 +1,7 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 import { useState } from 'react'
 import { DiagnosisComparisonDashboard } from '@/components/dashboard/DiagnosisComparisonDashboard'
 import { DiagnosisTimeline } from '@/components/dashboard/DiagnosisTimeline'

@@ -1,5 +1,7 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 import { IntegratedDataDashboard } from '@/components/dashboard'
 import { useSearchParams } from 'next/navigation'
 

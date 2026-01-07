@@ -1,5 +1,7 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 // React hooks
 import { useEffect } from 'react'
 
@@ -168,7 +170,9 @@ export default function DiagnosisPage() {
           {/* 온라인 채널 진단 */}
           <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
             {dashboardData.onlineChannelDiagnostics && (
-              <OnlineChannelDiagnostics diagnostics={dashboardData.onlineChannelDiagnostics} />
+              <OnlineChannelDiagnostics 
+                diagnostics={dashboardData.onlineChannelDiagnostics as any} 
+              />
             )}
           </div>
         </div>

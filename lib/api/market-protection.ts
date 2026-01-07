@@ -12,7 +12,7 @@ import {
   MarketHealthAnalysis,
   Evidence,
   ReportResult
-} from '@/shared/types/market-protection';
+} from '../../shared/types/market-protection';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 

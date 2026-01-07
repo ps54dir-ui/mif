@@ -1,5 +1,7 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { OverallScoreCard } from '@/components/dashboard/OverallScoreCard'
@@ -63,7 +65,7 @@ const MOCK_DATA: DashboardData = {
       engagement_index: 0,
       hashtag_spread_rank: ''
     }
-  },
+  } as any,
   channelDiagnostics: {}
 }
 
@@ -154,7 +156,7 @@ export default function DiagnosisResultsPage() {
           {/* 온라인 채널 진단 */}
           {dashboardData.onlineChannelDiagnostics && (
             <OnlineChannelDiagnostics
-              diagnostics={dashboardData.onlineChannelDiagnostics}
+              diagnostics={dashboardData.onlineChannelDiagnostics as any}
             />
           )}
 
