@@ -89,15 +89,14 @@ export default function ComprehensiveOpinionPage() {
           </div>
         </div>
       </div>
-
+      
       {/* Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="space-y-8">
-          const currentScore = Number((dashboardData as any)?.overallScore ?? 0);
+        <div className="space-y-8"> 
           {/* 리포트 발행 전 분석 (종합평가, SWOT, 전략수립) */}
           <ReportPreIssueAnalysis
             companyName={companyName}
-            currentScore={currentScore}
+            currentScore = {Number((dashboardData as any)?.overallScore ?? 0)}
           />
 
           {/* AI 실행 요약 */}
