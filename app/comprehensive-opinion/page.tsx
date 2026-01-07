@@ -8,7 +8,8 @@ import { ICETodoList } from '@/components/dashboard/ICETodoList'
 import { ArrowLeft, TrendingUp } from 'lucide-react'
 import Link from 'next/link'
 import type { DashboardData } from '../../shared/types/dashboard'
-import type { ICEPriority } from '@/shared/types/ice' // 경로가 다르면 아래 주석 참고
+
+type ICEPriority = DashboardData['icePriorities'][number]
 
 // ✅ Mock 데이터 (DashboardData 타입으로 확정)
 const MOCK_DATA: DashboardData = {
@@ -127,11 +128,3 @@ export default function ComprehensiveOpinionPage() {
     </div>
   )
 }
-
-/**
- * ✅ 만약 ICEPriority import 경로가 없다면:
- * - repo에서 "ICEPriority"를 검색해서 실제 타입 파일 경로를 확인해 주세요.
- * - 못 찾으면 위 import 줄을 지우고, 아래처럼 임시 타입을 만들어도 빌드는 통과합니다:
- *
- * type ICEPriority = DashboardData['icePriorities'][number]
- */
