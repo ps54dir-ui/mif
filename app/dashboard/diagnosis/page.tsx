@@ -1,7 +1,12 @@
 'use client'
 
+// React hooks
 import { useEffect } from 'react'
+
+// Next.js hooks
 import { useSearchParams } from 'next/navigation'
+
+// Components
 import { OverallScoreCard } from '@/components/dashboard/OverallScoreCard'
 import { RadarChartComponent } from '@/components/dashboard/RadarChartComponent'
 import { SEOGEOReportCards } from '@/components/dashboard/SEOGEOReportCards'
@@ -12,7 +17,6 @@ import { DigitalShareCard } from '@/components/dashboard/DigitalShareCard'
 import { ChannelConnectionStatus } from '@/components/dashboard/ChannelConnectionStatus'
 import { GA4AnalyticsDashboard } from '@/components/dashboard/GA4AnalyticsDashboard'
 import PageOverlayVisualization from '@/components/ga4/PageOverlayVisualization'
-import { generatePageOverlayData } from '@/lib/ga4/pageOverlay'
 import MetaAdsDashboard from '@/components/meta/MetaAdsDashboard'
 import AIAuthorityDashboard from '@/components/aeo/AIAuthorityDashboard'
 import { PDFExportButton } from '@/components/dashboard/PDFExportButton'
@@ -22,7 +26,10 @@ import { ReviewManagementEvaluation } from '@/components/dashboard/ReviewManagem
 import { IntegratedDataDashboard } from '@/components/dashboard/IntegratedDataDashboard'
 import { DataCollectionSummary } from '@/components/dashboard/DataCollectionSummary'
 import { NaverSearchResults } from '@/components/dashboard/NaverSearchResults'
+
+// Hooks & Utils
 import { useDashboardData } from '../shared/useDashboardData'
+import { generatePageOverlayData } from '@/lib/ga4/pageOverlay'
 
 // 회사명을 기반으로 홈페이지 URL 생성 헬퍼 함수
 function getCompanyHomepageUrl(companyName: string): string {
@@ -69,10 +76,14 @@ function getCompanyHomepageUrl(companyName: string): string {
 }
 
 export default function DiagnosisPage() {
+  // Hooks
   const { dashboardData, loading, companyName } = useDashboardData()
   const searchParams = useSearchParams()
 
-  // 채널/카테고리 anchor로 스크롤
+  // Variables (hooks 호출 후, useEffect 전에 선언)
+  const homepageUrl = getCompanyHomepageUrl(companyName)
+
+  // Effects
   useEffect(() => {
     if (!searchParams) return
     const key = searchParams.get('channel') || searchParams.get('category')
@@ -82,7 +93,6 @@ export default function DiagnosisPage() {
       el.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
   }, [searchParams])
-  const homepageUrl = getCompanyHomepageUrl(companyName)
 
   if (loading) {
     return (
