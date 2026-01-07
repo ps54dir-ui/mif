@@ -54,7 +54,16 @@ const MOCK_DATA: DashboardData = {
     }
   ],
   diagnosisHistory: [],
-  onlineChannelDiagnostics: {},
+  onlineChannelDiagnostics: {
+    youtube: {
+      video_mentions_growth: 0,
+      viral_index: 0
+    },
+    instagram: {
+      engagement_index: 0,
+      hashtag_spread_rank: ''
+    }
+  },
   channelDiagnostics: {}
 }
 
@@ -143,9 +152,9 @@ export default function DiagnosisResultsPage() {
           <ChannelConnectionStatus brandId={companyName} />
 
           {/* 온라인 채널 진단 */}
-          {dashboardData.onlineChannelDiagnostics && dashboardData.onlineChannelDiagnostics.youtube && dashboardData.onlineChannelDiagnostics.instagram && (
+          {dashboardData.onlineChannelDiagnostics && (
             <OnlineChannelDiagnostics
-              diagnostics={dashboardData.onlineChannelDiagnostics as any}
+              diagnostics={dashboardData.onlineChannelDiagnostics}
             />
           )}
 

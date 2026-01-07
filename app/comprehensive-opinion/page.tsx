@@ -40,7 +40,16 @@ const MOCK_DATA: DashboardData = {
     }
   ],
   diagnosisHistory: [],
-  onlineChannelDiagnostics: {},
+  onlineChannelDiagnostics: {
+    youtube: {
+      video_mentions_growth: 0,
+      viral_index: 0
+    },
+    instagram: {
+      engagement_index: 0,
+      hashtag_spread_rank: ''
+    }
+  },
   channelDiagnostics: {}
 }
 
