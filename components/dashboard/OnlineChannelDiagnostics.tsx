@@ -9,7 +9,7 @@ interface OnlineChannelDiagnosticsProps {
       video_mentions_growth: number  // 200% 상승
       viral_index: number  // 92점
     }
-    tiktok: {
+    tiktok?: {
       video_mentions_growth: number
       viral_index: number
     }
