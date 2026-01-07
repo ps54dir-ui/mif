@@ -191,7 +191,7 @@ export default function HomeDashboard() {
         method: 'POST',
         headers,
         body: JSON.stringify(requestBody),
-        signal: AbortSignal.timeout(20000) // 20초 타임아웃 (백엔드에서 여러 소스 조회로 시간 소요)
+        signal: AbortSignal.timeout(30000) // 30초 타임아웃 (백엔드에서 여러 소스 조회로 시간 소요)
       })
 
       clearTimeout(timeoutId)
