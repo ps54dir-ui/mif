@@ -1,15 +1,16 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { ReportPreIssueAnalysis } from '@/components/dashboard/ReportPreIssueAnalysis'
 import { ExecutiveSummary } from '@/components/dashboard/ExecutiveSummary'
 import { ICETodoList } from '@/components/dashboard/ICETodoList'
-import { ArrowLeft, TrendingUp, FileText } from 'lucide-react'
+import { ArrowLeft, TrendingUp } from 'lucide-react'
 import Link from 'next/link'
 import type { DashboardData } from '../../shared/types/dashboard'
+import type { ICEPriority } from '@/shared/types/ice' // 경로가 다르면 아래 주석 참고
 
-// Mock 데이터
+// ✅ Mock 데이터 (DashboardData 타입으로 확정)
 const MOCK_DATA: DashboardData = {
   overallScore: 88,
   fourAxes: {
@@ -45,14 +46,28 @@ const MOCK_DATA: DashboardData = {
 export default function ComprehensiveOpinionPage() {
   const searchParams = useSearchParams()
   const companyName = searchParams.get('brand_name') || '삼성생명'
+
+  // ✅ state 자체를 확실히 DashboardData로 고정
   const [dashboardData, setDashboardData] = useState<DashboardData>(MOCK_DATA)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    setTimeout(() => {
+    // (회사명 바뀌면 로딩 연출만)
+    setLoading(true)
+    const t = setTimeout(() => {
+      setDashboardData(MOCK_DATA) // 추후 API 연동 시 여기만 교체
       setLoading(false)
     }, 500)
+
+    return () => clearTimeout(t)
   }, [companyName])
+
+  // ✅ 핵심: ICETodoList에 들어가는 값은 "항상 배열" + 타입 확정
+  const icePriorities = useMemo(() => {
+    // 타입이 꼬여도 빌드가 죽지 않도록 방어 + 최종적으로 배열로 고정
+    const list = (dashboardData?.icePriorities ?? []) as unknown
+    return (Array.isArray(list) ? list : []) as ICEPriority[]
+  }, [dashboardData])
 
   if (loading) {
     return (
@@ -72,10 +87,7 @@ export default function ComprehensiveOpinionPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <Link
-                href="/"
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              >
+              <Link href="/" className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
                 <ArrowLeft className="w-5 h-5 text-gray-600" />
               </Link>
               <div>
@@ -89,31 +101,37 @@ export default function ComprehensiveOpinionPage() {
           </div>
         </div>
       </div>
-      
+
       {/* Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="space-y-8"> 
+        <div className="space-y-8">
           {/* 리포트 발행 전 분석 (종합평가, SWOT, 전략수립) */}
           <ReportPreIssueAnalysis
             companyName={companyName}
-            currentScore = {Number((dashboardData as any)?.overallScore ?? 0)}
+            currentScore={Number(dashboardData?.overallScore ?? 0)}
           />
 
           {/* AI 실행 요약 */}
           <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
             <h2 className="text-xl font-bold text-gray-900 mb-4">AI 실행 요약</h2>
-            <ExecutiveSummary
-              brandId={companyName}
-            />
+            <ExecutiveSummary brandId={companyName} />
           </div>
 
           {/* 우선순위 전략 */}
           <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
             <h2 className="text-xl font-bold text-gray-900 mb-4">우선순위 전략 (ICE Score)</h2>
-            <ICETodoList priorities={dashboardData.icePriorities} />
+            <ICETodoList priorities={icePriorities} />
           </div>
         </div>
       </div>
     </div>
   )
 }
+
+/**
+ * ✅ 만약 ICEPriority import 경로가 없다면:
+ * - repo에서 "ICEPriority"를 검색해서 실제 타입 파일 경로를 확인해 주세요.
+ * - 못 찾으면 위 import 줄을 지우고, 아래처럼 임시 타입을 만들어도 빌드는 통과합니다:
+ *
+ * type ICEPriority = DashboardData['icePriorities'][number]
+ */
