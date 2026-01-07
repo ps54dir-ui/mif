@@ -33,6 +33,25 @@ export const NIKE_DATA: DashboardData = {
       ]
     }
   ],
+  seoReport: {
+    score: 95,
+    insights: []
+  },
+  geoReport: {
+    score: 72,
+    insights: [
+      '생성형 AI 응답에서 경쟁 브랜드 대비 구체적 통계 인용 수치가 부족함',
+      'JSON-LD 스키마 추가 필요',
+      '통계 및 인용구 보강 필요'
+    ]
+  },
+  aeoReport: {
+    score: 68,
+    insights: [
+      'FAQ/Q&A 포맷 부족',
+      '서술형 콘텐츠 → 표/불렛포인트 전환 필요'
+    ]
+  },
   icePriorities: [
     {
       id: '1',

@@ -1,5 +1,7 @@
 // shared/types/dashboard.ts
 
+import type { OnlineChannelDiagnosticsData } from './channels'
+
 export interface ICEPriority {
   id: string
   strategyName: string
@@ -42,6 +44,28 @@ export interface DashboardData {
   icePriorities: ICEPriority[]
 
   diagnosisHistory: any[]
-  onlineChannelDiagnostics: Record<string, any>
+  onlineChannelDiagnostics?: OnlineChannelDiagnosticsData
   channelDiagnostics: Record<string, any>
+  
+  channelAsymmetry?: {
+    insights: Array<{
+      type: string
+      channel1: string
+      channel2: string
+      metric: string
+      message: string
+    }>
+    summary: string
+  }
+  digitalShare?: {
+    overall_digital_share: number
+    seo_contribution: number
+    sns_contribution: number
+    channel_contributions: Record<string, number>
+    breakdown: {
+      seo_score: number
+      average_sns_score: number
+      sns_channels: Record<string, number>
+    }
+  }
 }

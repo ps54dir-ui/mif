@@ -4,161 +4,40 @@
  */
 
 import { getMockBrandData, type MockBrandData } from './mockData'
+import type { DashboardData } from '@/shared/types/dashboard'
 
-/**
- * DashboardData 타입 (페이지에서 사용하는 타입과 동일)
- */
-export interface DashboardData {
-  overallScore: number
-  fourAxes: {
-    inflow: number      // 유입
-    persuasion: number  // 설득
-    trust: number       // 신뢰
-    circulation: number // 순환
-  }
-  seoGeoAeoReports: Array<{
-    type: 'SEO' | 'GEO' | 'AEO'
-    score: number
-    issues: string[]
-  }>
-  icePriorities: Array<{
-    id: string
-    strategyName: string
-    impact: number
-    confidence: number
-    ease: number
-    finalScore: number
-    description?: string
-  }>
-  diagnosisHistory: Array<{
-    date: string
-    overallScore: number
-    version: number
-  }>
-  snsDiagnostics?: {
-    youtube?: any
-    tiktok?: any
-    twitter?: any
-    threads?: any
-  }
-  channelAsymmetry?: {
-    insights: Array<{
-      type: string
-      channel1: string
-      channel2: string
-      metric: string
-      message: string
-    }>
-    summary: string
-  }
-  digitalShare?: {
-    overall_digital_share: number
-    seo_contribution: number
-    sns_contribution: number
-    channel_contributions: Record<string, number>
-    breakdown: {
-      seo_score: number
-      average_sns_score: number
-      sns_channels: Record<string, number>
-    }
-  }
-  onlineChannelDiagnostics?: {
-    youtube: {
-      video_mentions_growth: number
-      viral_index: number
-    }
-    tiktok?: {
-      video_mentions_growth: number
-      viral_index: number
-    }
-    instagram: {
-      engagement_index: number
-      hashtag_spread_rank: string
-    }
-    threads?: {
-      engagement_index: number
-      hashtag_spread_rank: string
-    }
-    naver_cafe?: {
-      positive_review_ratio: number
-      response_speed: string
-    }
-    daum_cafe?: {
-      positive_review_ratio: number
-      response_speed: string
-    }
-    own_mall?: {
-      conversion_rate: number
-      repeat_visit_rate: number
-    }
-    x_twitter?: {
-      mentions_growth: number
-      engagement_rate: number
-    }
-    smartstore?: {
-      conversion_rate: number
-      review_score: number
-    }
-    coupang?: {
-      sales_performance: number
-      review_score: number
-    }
-    facebook?: {
-      engagement_index: number
-      reach_growth: number
-    }
-    youtube_shorts?: {
-      views_growth: number
-      engagement_rate: number
-    }
-  }
-  channelDiagnostics?: {
-    youtube?: {
-      score: number
-      insight: string
-    }
-    instagram?: {
-      score: number
-      insight: string
-    }
-    community?: {
-      score: number
-      insight: string
-    }
-    tiktok?: {
-      score: number
-      insight: string
-    }
-    threads?: {
-      score: number
-      insight: string
-    }
-    facebook?: {
-      score: number
-      insight: string
-    }
-    youtube_shorts?: {
-      score: number
-      insight: string
-    }
-  }
-}
+// 공용 타입을 re-export
+export type { DashboardData } from '@/shared/types/dashboard'
 
 /**
  * Mock 데이터를 DashboardData 형식으로 변환
  */
 function convertMockDataToDashboardData(mockData: MockBrandData): DashboardData {
+  // seoGeoAeoReports에서 각 타입별 점수 추출
+  const seoReport = mockData.seoGeoAeoReports.find(r => r.type === 'SEO')
+  const geoReport = mockData.seoGeoAeoReports.find(r => r.type === 'GEO')
+  const aeoReport = mockData.seoGeoAeoReports.find(r => r.type === 'AEO')
+
   return {
     overallScore: mockData.overallScore,
     fourAxes: mockData.fourAxes,
     seoGeoAeoReports: mockData.seoGeoAeoReports,
+    seoReport: {
+      score: seoReport?.score || 0,
+      insights: seoReport?.issues || []
+    },
+    geoReport: {
+      score: geoReport?.score || 0,
+      insights: geoReport?.issues || []
+    },
+    aeoReport: {
+      score: aeoReport?.score || 0,
+      insights: aeoReport?.issues || []
+    },
     icePriorities: mockData.icePriorities,
     diagnosisHistory: mockData.diagnosisHistory,
-    snsDiagnostics: mockData.snsDiagnostics,
-    channelAsymmetry: mockData.channelAsymmetry,
-    digitalShare: mockData.digitalShare,
     onlineChannelDiagnostics: mockData.onlineChannelDiagnostics,
-    channelDiagnostics: mockData.channelDiagnostics
+    channelDiagnostics: mockData.channelDiagnostics || {}
   }
 }
 
